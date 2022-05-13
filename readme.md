@@ -2,9 +2,9 @@
 全局事件审计模块,主要用作重要事件处理需求
 
 
-## rock.event
-- ev = rock.event(typeof)
-- ev = rock.event{typeof , msg , remote , port ,...}
+## vela.event
+- ev = vela.event(typeof)
+- ev = vela.event{typeof , msg , remote , port ,...}
 - 采用的是链式调用的方式和table初始化方法
 ### 字段
 - 满足index 和new index 接口
@@ -42,7 +42,7 @@
 - [Put(b , b , n)]() 是否提交 参数1: 是打印记录日志  参数2： 是否告警  参数3： 设置等级
 
 ```lua
-    local ev = rock.event("demo").Msg("helo").Port(1)
+    local ev = vela.event("demo").Msg("helo").Port(1)
         .Remote("127.0.0.1").Auth("use:a pass:2").E("fail")
     ev.Put(true , true)
 ```
