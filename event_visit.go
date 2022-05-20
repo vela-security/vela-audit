@@ -3,11 +3,9 @@ package audit
 import (
 	"errors"
 	"fmt"
-	"github.com/vela-security/vela-public/assert"
 	"github.com/vela-security/vela-public/catch"
 	"github.com/vela-security/vela-public/kind"
 	"github.com/vela-security/vela-public/lua"
-	"go.uber.org/zap"
 	"net"
 	"strconv"
 	"strings"
@@ -57,9 +55,9 @@ func (ev *Event) Byte() []byte {
 }
 
 func (ev *Event) toLine() string {
-	return fmt.Sprintf("[%s] [%s] - %s - %s - %s - %d - %s - %s -%s - %s - %s - %s - %s",
-		ev.time, ev.id, ev.inet, ev.subject, ev.rAddr, ev.rPort, ev.from, ev.typeof,
-		ev.user, ev.auth, ev.msg)
+	return fmt.Sprintf("[%s] [%s] [%s] %s  %s  %s  %d  %s  %s %s  %s  %s  %s  %v",
+		ev.level, ev.time, ev.id, ev.inet, ev.subject, ev.rAddr, ev.rPort, ev.from, ev.typeof,
+		ev.user, ev.auth, ev.msg, ev.region, ev.err)
 }
 
 func (ev *Event) json(L *lua.LState) int {
@@ -196,34 +194,31 @@ func (ev *Event) E(e error) *Event {
 
 func (ev *Event) Log() *Event {
 	if ev.err == nil {
+		xEnv.Debug(ev.toLine())
 		return ev
 	}
+	xEnv.Error(ev.toLine())
 
-	if assert.GxEnv().Mode() != "worker" {
-		return ev
-	}
-
-	var e string
-	if ev.err == nil {
-		e = ""
-	} else {
-		e = ev.err.Error()
-	}
-
-	xEnv.Error(ev.msg, zap.Time("time", ev.time),
-		zap.String("node_id", ev.id),
-		zap.String("inet", ev.inet),
-		zap.String("subject", ev.subject),
-		zap.String("remote_addr", ev.rAddr),
-		zap.Int("remote_port", ev.rPort),
-		zap.String("region", ev.region),
-		zap.String("from", ev.from),
-		zap.String("typeof", ev.typeof),
-		zap.String("user", ev.user),
-		zap.String("auth", ev.auth),
-		zap.String("error", e),
-		zap.Bool("alert", ev.alert),
-		zap.String("level", ev.level))
+	//var e string
+	//if ev.err == nil {
+	//	e = ""
+	//} else {
+	//	e = ev.err.Error()
+	//}
+	//xEnv.Error(ev.msg, zap.Time("time", ev.time),
+	//	zap.String("node_id", ev.id),
+	//	zap.String("inet", ev.inet),
+	//	zap.String("subject", ev.subject),
+	//	zap.String("remote_addr", ev.rAddr),
+	//	zap.Int("remote_port", ev.rPort),
+	//	zap.String("region", ev.region),
+	//	zap.String("from", ev.from),
+	//	zap.String("typeof", ev.typeof),
+	//	zap.String("user", ev.user),
+	//	zap.String("auth", ev.auth),
+	//	zap.String("error", e),
+	//	zap.Bool("alert", ev.alert),
+	//	zap.String("level", ev.level))
 	return ev
 }
 
