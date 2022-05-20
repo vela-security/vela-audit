@@ -193,12 +193,20 @@ func (ev *Event) E(e error) *Event {
 }
 
 func (ev *Event) Log() *Event {
+
 	if ev.err == nil {
-		xEnv.Debug(ev.toLine())
+		xEnv.Debugf("[%s] [%s] %s %s %s %s %s %s %d %s",
+			ev.level, ev.subject, ev.from, ev.typeof,
+			ev.user, ev.auth, ev.msg, ev.rAddr, ev.rPort, ev.region)
+		//xEnv.Debug(ev.toLine())
 		return ev
 	}
-	xEnv.Error(ev.toLine())
 
+	xEnv.Errorf("[%s] [%s] %s %s %s %s %s %s %d %s %v",
+		ev.level, ev.subject, ev.from, ev.typeof,
+		ev.user, ev.auth, ev.msg, ev.rAddr, ev.rPort, ev.region, ev.err)
+
+	return ev
 	//var e string
 	//if ev.err == nil {
 	//	e = ""
@@ -219,7 +227,7 @@ func (ev *Event) Log() *Event {
 	//	zap.String("error", e),
 	//	zap.Bool("alert", ev.alert),
 	//	zap.String("level", ev.level))
-	return ev
+	//return ev
 }
 
 func (ev *Event) Level(i int) {
