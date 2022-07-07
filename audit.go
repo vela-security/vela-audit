@@ -2,6 +2,7 @@ package audit
 
 import (
 	"encoding/json"
+	opcode "github.com/vela-security/vela-opcode"
 	"github.com/vela-security/vela-public/assert"
 	"github.com/vela-security/vela-public/lua"
 	"os"
@@ -110,7 +111,7 @@ func (a *Audit) handle(ev *Event) {
 		return
 	}
 
-	err := xEnv.TnlSend(assert.OpEvent, json.RawMessage(ev.Byte()))
+	err := xEnv.TnlSend(opcode.OpEvent, json.RawMessage(ev.Byte()))
 	if err != nil {
 		xEnv.Errorf("%s tnl send event fail %v", xEnv.TnlName(), err)
 		return

@@ -305,6 +305,10 @@ func (ev *Event) Alert() *Event {
 	return ev
 }
 
+func (ev *Event) IsAlert() bool {
+	return ev.alert
+}
+
 func (ev *Event) Field(key string) string {
 	switch key {
 	case "id":
